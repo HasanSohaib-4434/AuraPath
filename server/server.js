@@ -2,8 +2,11 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import mongoose from 'mongoose'
+import { sessionMiddleware } from './middleware/session.js'
 import pdfRoutes from './routes/pdfRoutes.js'
-import roadmapRoutes from './routes/roadmapRoutes.js'
+import roadmapRoutes, { recapRouter } from './routes/roadmapRoutes.js'
+import sessionRoutes from './routes/sessionRoutes.js'
+import studentRoutes from './routes/studentRoutes.js'
 
 dotenv.config()
 
@@ -11,7 +14,11 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
+app.use(sessionMiddleware)
 
+app.use('/api/session', sessionRoutes)
+app.use('/api/recap', recapRouter)
+app.use('/api/student', studentRoutes)
 app.use('/api/roadmaps', roadmapRoutes)
 app.use('/api/roadmaps', pdfRoutes)
 

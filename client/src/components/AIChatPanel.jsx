@@ -1,6 +1,16 @@
+import { useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { createPortal } from 'react-dom'
 import { Bot, Loader2, MessageCircle, PanelRightClose, Send, Sparkles, User } from 'lucide-react'
+import VoiceButton from './VoiceButton.jsx'
+import ListenButton from './ListenButton.jsx'
+
+const QUICK_PROMPTS = [
+  'Summarize the key concepts',
+  'What should I learn first?',
+  'Quiz me on this material',
+  'Explain the hardest topic simply',
+]
 
 const AIChatPanel = ({
   open,
@@ -9,14 +19,24 @@ const AIChatPanel = ({
   input,
   onInputChange,
   onSend,
+  onQuickPrompt,
   sending,
   pdfReady,
   showSources,
   onShowSourcesChange,
+  useStreaming,
+  onStreamingChange,
 }) => {
+  const scrollRef = useRef(null)
   const latestSources =
     [...messages].reverse().find((m) => m.role === 'assistant' && Array.isArray(m.sources) && m.sources.length)?.sources ||
     []
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
+  }, [messages, sending])
 
   return createPortal(
     <AnimatePresence>
@@ -38,15 +58,15 @@ const AIChatPanel = ({
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 32, stiffness: 340 }}
           >
-            <div className="border-b border-surface-border bg-gradient-to-r from-lumina-500/10 to-emerald-500/5 px-4 py-4">
+            <div className="border-b border-surface-border bg-gradient-to-r from-aura-500/10 to-cyan-500/5 px-4 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-lumina-500 to-lumina-700 shadow-glow-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-aura-500 to-aura-700 shadow-glow-sm">
                     <MessageCircle className="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <div className="text-sm font-semibold text-zinc-100">Study assistant</div>
-                    <div className="text-xs text-zinc-500">Ask anything about your PDF</div>
+                    <div className="text-sm font-semibold text-zinc-100">AuraPath assistant</div>
+                    <div className="text-xs text-zinc-500">Grounded in your PDF + path progress</div>
                   </div>
                 </div>
                 <button
@@ -69,22 +89,52 @@ const AIChatPanel = ({
                 role="switch"
                 aria-checked={showSources}
                 onClick={() => onShowSourcesChange(!showSources)}
-                className={`relative h-7 w-12 rounded-full transition ${showSources ? 'bg-lumina-600' : 'bg-surface-elevated'}`}
+                className={`relative h-7 w-12 rounded-full transition ${showSources ? 'bg-aura-600' : 'bg-surface-elevated'}`}
               >
                 <span
                   className={`absolute top-0.5 left-0.5 h-6 w-6 rounded-full bg-white shadow transition ${showSources ? 'translate-x-5' : 'translate-x-0'}`}
                 />
               </button>
             </div>
-            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 text-sm">
+            <div className="flex items-center justify-between gap-3 border-b border-surface-border/80 px-4 py-2">
+              <span className="text-xs text-zinc-500">Stream responses</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={useStreaming}
+                onClick={() => onStreamingChange?.(!useStreaming)}
+                className={`relative h-7 w-12 rounded-full transition ${useStreaming ? 'bg-aura-600' : 'bg-surface-elevated'}`}
+              >
+                <span
+                  className={`absolute top-0.5 left-0.5 h-6 w-6 rounded-full bg-white shadow transition ${useStreaming ? 'translate-x-5' : 'translate-x-0'}`}
+                />
+              </button>
+            </div>
+            <div ref={scrollRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 text-sm">
               {!pdfReady ? (
                 <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-sm text-amber-200/90">
-                  Upload a study PDF on your roadmap first — then you can ask questions here.
+                  Upload a study PDF on your path first — then ask anything here.
                 </div>
-              ) : messages.length === 0 ? (
-                <div className="rounded-xl border border-surface-border bg-surface-card/80 px-4 py-6 text-center">
-                  <Bot className="mx-auto mb-2 h-8 w-8 text-lumina-400" />
-                  <p className="text-zinc-400">Try: &quot;Summarize chapter 1&quot; or &quot;What should I focus on first?&quot;</p>
+              ) : null}
+              {pdfReady && messages.length === 0 ? (
+                <div className="rounded-xl border border-surface-border bg-surface-card/80 px-4 py-5">
+                  <Bot className="mb-2 h-8 w-8 text-aura-400" />
+                  <p className="mb-3 text-sm text-zinc-400">Quick prompts to get started:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {QUICK_PROMPTS.map((p) => (
+                      <motion.button
+                        key={p}
+                        type="button"
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        disabled={sending}
+                        onClick={() => onQuickPrompt(p)}
+                        className="chip text-left"
+                      >
+                        {p}
+                      </motion.button>
+                    ))}
+                  </div>
                 </div>
               ) : null}
               {messages.map((m, i) => (
@@ -96,7 +146,7 @@ const AIChatPanel = ({
                 >
                   <div
                     className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                      m.role === 'user' ? 'bg-lumina-600/30 text-lumina-300' : 'bg-surface-elevated text-emerald-400'
+                      m.role === 'user' ? 'bg-aura-600/30 text-aura-300' : 'bg-surface-elevated text-emerald-400'
                     }`}
                   >
                     {m.role === 'user' ? <User className="h-3.5 w-3.5" /> : <Bot className="h-3.5 w-3.5" />}
@@ -104,18 +154,23 @@ const AIChatPanel = ({
                   <div
                     className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 ${
                       m.role === 'user'
-                        ? 'bg-gradient-to-br from-lumina-600 to-lumina-700 text-white'
+                        ? 'bg-gradient-to-br from-aura-600 to-aura-700 text-white'
                         : 'border border-surface-border bg-surface-card text-zinc-200'
                     }`}
                   >
-                    <div className="whitespace-pre-wrap break-words">{m.content}</div>
+                    <div className="whitespace-pre-wrap break-words">
+                      {typeof m.content === 'string' ? m.content : m.content == null ? '' : String(m.content)}
+                    </div>
+                    {m.role === 'assistant' && m.content && !m.streaming ? (
+                      <ListenButton text={m.content} messageKey={`msg-${i}`} />
+                    ) : null}
                   </div>
                 </motion.div>
               ))}
               {sending ? (
                 <div className="flex items-center gap-2 text-zinc-500">
-                  <Loader2 className="h-4 w-4 animate-spin text-lumina-400" />
-                  Finding answers in your PDF…
+                  <Loader2 className="h-4 w-4 animate-spin text-aura-400" />
+                  Searching your material…
                 </div>
               ) : null}
             </div>
@@ -126,12 +181,27 @@ const AIChatPanel = ({
                   {latestSources.map((s, j) => (
                     <li key={`src-${j}`} className="rounded-lg border border-surface-border bg-surface/80 px-3 py-2 text-xs">
                       {typeof s.score === 'number' ? (
-                        <span className="font-medium text-lumina-400">Match · {s.score}</span>
+                        <span className="font-medium text-aura-400">Match · {s.score}</span>
                       ) : null}
                       <div className="mt-1 line-clamp-3 text-zinc-400">{s.text || ''}</div>
                     </li>
                   ))}
                 </ul>
+              </div>
+            ) : null}
+            {pdfReady && messages.length > 0 ? (
+              <div className="flex shrink-0 gap-2 overflow-x-auto border-t border-surface-border/60 px-4 py-2">
+                {QUICK_PROMPTS.slice(0, 2).map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    disabled={sending}
+                    onClick={() => onQuickPrompt(p)}
+                    className="shrink-0 rounded-full border border-surface-border px-2.5 py-1 text-[11px] text-zinc-500 transition hover:border-aura-500/40 hover:text-aura-300"
+                  >
+                    {p}
+                  </button>
+                ))}
               </div>
             ) : null}
             <form
@@ -142,10 +212,11 @@ const AIChatPanel = ({
               }}
             >
               <div className="flex gap-2">
+                <VoiceButton onTranscript={(t) => onInputChange(input ? `${input} ${t}` : t)} disabled={!pdfReady || sending} />
                 <input
                   value={input}
                   onChange={(e) => onInputChange(e.target.value)}
-                  placeholder="Ask a question about your material…"
+                  placeholder="Ask AuraPath about your material…"
                   disabled={!pdfReady || sending}
                   className="input-field min-w-0 flex-1 py-2.5 disabled:opacity-50"
                 />
@@ -154,7 +225,7 @@ const AIChatPanel = ({
                   disabled={!pdfReady || sending || !input.trim()}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="inline-flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-lumina-600 to-lumina-500 px-3.5 py-2.5 text-white disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-aura-600 to-aura-500 px-3.5 py-2.5 text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Send className="h-4 w-4" />
                 </motion.button>

@@ -12,7 +12,16 @@ const LevelSchema = new mongoose.Schema(
 const RoadmapSchema = new mongoose.Schema({
   title: { type: String, required: true, trim: true },
   description: { type: String, default: '' },
+  goal: { type: String, default: '' },
+  duration: { type: String, default: '' },
   levels: { type: [LevelSchema], default: [] },
+  shareToken: { type: String, default: '', index: true },
+  isPublic: { type: Boolean, default: false },
+  forkedFrom: { type: mongoose.Schema.Types.ObjectId, ref: 'Roadmap', default: null },
+  variant: { type: String, default: '' },
+  examDate: { type: Date, default: null },
+  language: { type: String, default: 'en' },
+  templateId: { type: String, default: '' },
   createdAt: { type: Date, default: Date.now },
 })
 

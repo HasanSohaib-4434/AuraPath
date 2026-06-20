@@ -16,43 +16,77 @@
     background-attachment: fixed;
   }
 
+  .safe-bottom {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 768px) {
+    .safe-bottom {
+      padding-bottom: 5rem;
+    }
+  }
+
   ::selection {
-    @apply bg-lumina-500/40 text-white;
+    @apply bg-aura-500/40 text-white;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply rounded-2xl border border-surface-border/80 bg-surface-card/80 shadow-card backdrop-blur-xl;
+    @apply rounded-2xl border border-surface-border/80 bg-surface-card/80 shadow-card backdrop-blur-xl transition duration-300;
+  }
+
+  .glass-card-interactive {
+    @apply glass-card hover:border-aura-500/30 hover:shadow-glow-sm;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-lumina-600 to-lumina-500 px-5 py-3 text-sm font-semibold text-white shadow-glow-sm transition hover:from-lumina-500 hover:to-lumina-400 hover:shadow-glow active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:active:scale-100;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-aura-600 to-aura-500 px-5 py-3 text-sm font-semibold text-white shadow-glow-sm transition hover:from-aura-500 hover:to-aura-400 hover:shadow-glow active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:active:scale-100;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-surface-border bg-surface-elevated/80 px-4 py-2.5 text-sm font-medium text-zinc-200 transition hover:border-lumina-500/40 hover:bg-surface-elevated hover:text-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-surface-border bg-surface-elevated/80 px-4 py-2.5 text-sm font-medium text-zinc-200 transition hover:border-aura-500/40 hover:bg-surface-elevated hover:text-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-surface-border bg-surface/90 px-4 py-3 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-lumina-500/60 focus:ring-2 focus:ring-lumina-500/20;
+    @apply w-full rounded-xl border border-surface-border bg-surface/90 px-4 py-3 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-aura-500/60 focus:ring-2 focus:ring-aura-500/20;
   }
 
   .chip {
-    @apply cursor-pointer rounded-full border border-surface-border bg-surface-elevated/60 px-3 py-1.5 text-xs font-medium text-zinc-400 transition hover:border-lumina-500/50 hover:bg-lumina-500/10 hover:text-lumina-200;
+    @apply cursor-pointer rounded-full border border-surface-border bg-surface-elevated/60 px-3 py-1.5 text-xs font-medium text-zinc-400 transition hover:scale-105 hover:border-aura-500/50 hover:bg-aura-500/10 hover:text-aura-200 active:scale-95;
   }
 
   .chip-active {
-    @apply border-lumina-500/60 bg-lumina-500/15 text-lumina-200;
+    @apply scale-105 border-aura-500/60 bg-aura-500/15 text-aura-200 shadow-glow-sm;
+  }
+
+  .pill {
+    @apply cursor-pointer rounded-xl border border-surface-border bg-surface-elevated/60 px-3 py-2 text-xs font-medium text-zinc-400 transition hover:border-aura-500/40 hover:bg-aura-500/10 hover:text-aura-200 active:scale-95;
+  }
+
+  .pill-active {
+    @apply border-aura-500/50 bg-aura-500/15 text-aura-200 ring-1 ring-aura-500/30;
   }
 
   .timeline-line {
-    @apply absolute left-[1.125rem] top-10 bottom-0 w-0.5 bg-gradient-to-b from-lumina-500/60 via-lumina-500/20 to-transparent;
+    @apply absolute left-[1.125rem] top-10 bottom-0 w-0.5 bg-gradient-to-b from-aura-500/60 via-aura-500/20 to-transparent;
+  }
+
+  .drop-zone {
+    @apply rounded-xl border-2 border-dashed border-surface-border bg-surface/40 px-4 py-6 text-center transition;
+  }
+
+  .drop-zone-active {
+    @apply border-aura-500/60 bg-aura-500/10 shadow-glow-sm;
   }
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-r from-lumina-300 via-white to-emerald-300 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-aura-300 via-cyan-200 to-emerald-300 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-brand {
+    @apply bg-gradient-to-r from-aura-400 to-cyan-400 bg-clip-text text-transparent;
   }
 }
