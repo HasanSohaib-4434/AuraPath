@@ -1,20 +1,40 @@
 import io
 import os
 from typing import Any
-
+import faiss
 import numpy as np
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from google import genai
+from google.genai import errors as genai_errors
+from google.genai import types
 from pydantic import BaseModel, Field
 from pypdf import PdfReader
+from rank_bm25 import BM25Okapi
+from sentence_transformers import SentenceTransformer
 
 load_dotenv()
 
-EMBED_MODEL = "gemini-embedding-001"
 CHUNK_SIZE = 1200
 CHUNK_OVERLAP = 150
+ST_MODEL = "all-MiniLM-L6-v2"
+RRF_K = 60
+def chat_model_name() -> str:
+    raw = os.environ.get("GEMINI_CHAT_MODEL", "gemini-3.1-flash-lite").strip()
+    if "AIza" in raw:
+        raw = raw.split("AIza", 1)[0].strip()
+    return raw or "gemini-3.1-flash-lite"
+
+STORE: dict[str, dict[str, Any]] = {}
+_encoder: SentenceTransformer | None = None
+
+
+def get_encoder() -> SentenceTransformer:
+    global _encoder
+    if _encoder is None:
+        _encoder = SentenceTransformer(ST_MODEL)
+    return _encoder
 
 
 def get_client():
@@ -52,68 +72,85 @@ def chunk_text(text: str) -> list[str]:
     return chunks
 
 
-def embedding_values(resp: Any) -> list[float]:
-    if hasattr(resp, "embeddings") and resp.embeddings:
-        emb = resp.embeddings[0]
-        if hasattr(emb, "values"):
-            return list(emb.values)
-    if hasattr(resp, "embedding") and resp.embedding is not None:
-        e = resp.embedding
-        if hasattr(e, "values"):
-            return list(e.values)
-    d = resp.model_dump() if hasattr(resp, "model_dump") else {}
-    embs = d.get("embeddings")
-    if embs and isinstance(embs, list):
-        first = embs[0]
-        if isinstance(first, dict) and "values" in first:
-            return list(first["values"])
-    raise HTTPException(status_code=502, detail="Unexpected embedding response")
+def tokenize(s: str) -> list[str]:
+    return [t for t in s.lower().replace("\n", " ").split() if t]
 
 
-def embed_batch(client, texts: list[str]) -> list[list[float]]:
-    if not texts:
+def build_store(roadmap_id: str, chunks: list[str]) -> None:
+    enc = get_encoder()
+    embs = enc.encode(
+        chunks,
+        normalize_embeddings=True,
+        convert_to_numpy=True,
+        show_progress_bar=False,
+    )
+    dim = int(embs.shape[1])
+    index = faiss.IndexFlatIP(dim)
+    index.add(embs.astype(np.float32))
+    tokenized = [tokenize(c) for c in chunks]
+    bm25 = BM25Okapi(tokenized)
+    STORE[roadmap_id] = {
+        "chunks": chunks,
+        "faiss": index,
+        "bm25": bm25,
+    }
+
+
+def ensure_store(roadmap_id: str, chunks: list[str] | None = None) -> None:
+    if roadmap_id in STORE:
+        return
+    if not chunks:
+        raise HTTPException(status_code=404, detail="Unknown roadmap index")
+    build_store(roadmap_id, chunks)
+
+
+def hybrid_top_chunks(
+    roadmap_id: str,
+    query: str,
+    k_probe: int = 24,
+    final_k: int = 5,
+) -> list[tuple[str, float]]:
+    st = STORE.get(roadmap_id)
+    if not st:
+        raise HTTPException(status_code=404, detail="Unknown roadmap index")
+    chunks: list[str] = st["chunks"]
+    n = len(chunks)
+    if n == 0:
         return []
-    resp = client.models.embed_content(model=EMBED_MODEL, contents=texts)
-    out: list[list[float]] = []
-    if hasattr(resp, "embeddings") and resp.embeddings:
-        for emb in resp.embeddings:
-            if hasattr(emb, "values"):
-                out.append(list(emb.values))
-        if len(out) == len(texts):
-            return out
-    d = resp.model_dump() if hasattr(resp, "model_dump") else {}
-    embs = d.get("embeddings") or []
-    for item in embs:
-        if isinstance(item, dict) and "values" in item:
-            out.append(list(item["values"]))
-    if len(out) == len(texts):
-        return out
-    out = []
-    for t in texts:
-        one = client.models.embed_content(model=EMBED_MODEL, contents=t)
-        out.append(embedding_values(one))
-    if len(out) != len(texts):
-        raise HTTPException(status_code=502, detail="Embedding count mismatch")
-    return out
+    enc = get_encoder()
+    qv = enc.encode(
+        [query],
+        normalize_embeddings=True,
+        convert_to_numpy=True,
+        show_progress_bar=False,
+    ).astype(np.float32)
+    k_f = min(k_probe, n)
+    _, idx = st["faiss"].search(qv, k_f)
+    faiss_ranks = [int(i) for i in idx[0].tolist() if 0 <= int(i) < n]
+
+    scores = st["bm25"].get_scores(tokenize(query))
+    bm25_order = list(np.argsort(-np.asarray(scores)))[: min(k_probe, n)]
+
+    rrf: dict[int, float] = {}
+    for rank, doc_i in enumerate(faiss_ranks):
+        rrf[doc_i] = rrf.get(doc_i, 0.0) + 1.0 / (RRF_K + rank + 1)
+    for rank, doc_i in enumerate(bm25_order):
+        rrf[doc_i] = rrf.get(doc_i, 0.0) + 1.0 / (RRF_K + rank + 1)
+
+    ordered = sorted(rrf.items(), key=lambda x: -x[1])[:final_k]
+    return [(chunks[i], float(s)) for i, s in ordered]
 
 
-def cosine_top_k(
-    query_vec: np.ndarray,
-    matrix: np.ndarray,
-    top_k: int,
-) -> list[tuple[int, float]]:
-    qn = np.linalg.norm(query_vec)
-    if qn == 0:
-        return []
-    norms = np.linalg.norm(matrix, axis=1)
-    dots = matrix @ query_vec
-    denom = norms * qn
-    denom = np.where(denom == 0, 1e-12, denom)
-    sims = dots / denom
-    k = min(top_k, len(sims))
-    idx = np.argpartition(-sims, k - 1)[:k]
-    idx = idx[np.argsort(-sims[idx])]
-    return [(int(i), float(sims[i])) for i in idx]
+class HistoryMsg(BaseModel):
+    role: str = Field(min_length=1)
+    content: str = Field(min_length=1)
+
+
+class ChatBody(BaseModel):
+    roadmap_id: str = Field(min_length=1)
+    message: str = Field(min_length=1)
+    history: list[HistoryMsg] = Field(default_factory=list)
+    chunks: list[str] = Field(default_factory=list)
 
 
 app = FastAPI()
@@ -126,15 +163,11 @@ app.add_middleware(
 )
 
 
-class SearchBody(BaseModel):
-    query: str = Field(min_length=1)
-    chunks: list[str] = Field(default_factory=list)
-    embeddings: list[list[float]] = Field(default_factory=list)
-    top_k: int = Field(default=5, ge=1, le=50)
-
-
 @app.post("/process-pdf")
-async def process_pdf(file: UploadFile = File(...)):
+async def process_pdf(roadmap_id: str = Form(...), file: UploadFile = File(...)):
+    rid = roadmap_id.strip()
+    if not rid:
+        raise HTTPException(status_code=400, detail="roadmap_id required")
     if not file.filename or not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="PDF file required")
     data = await file.read()
@@ -144,31 +177,51 @@ async def process_pdf(file: UploadFile = File(...)):
     chunks = chunk_text(text)
     if not chunks:
         raise HTTPException(status_code=400, detail="No extractable text")
-    client = get_client()
-    vectors = embed_batch(client, chunks)
-    return {"chunks": chunks, "embeddings": vectors, "filename": file.filename}
+    build_store(rid, chunks)
+    return {
+        "chunks": chunks,
+        "chunk_count": len(chunks),
+        "filename": file.filename,
+        "roadmap_id": rid,
+    }
 
 
-@app.post("/search")
-async def search(body: SearchBody):
-    if not body.chunks or not body.embeddings:
-        raise HTTPException(status_code=400, detail="chunks and embeddings required")
-    if len(body.chunks) != len(body.embeddings):
-        raise HTTPException(status_code=400, detail="chunks and embeddings length mismatch")
+@app.post("/chat")
+async def chat(body: ChatBody):
+    rid = body.roadmap_id.strip()
+    if not rid:
+        raise HTTPException(status_code=400, detail="roadmap_id required")
+    chunk_texts = [c.strip() for c in body.chunks if isinstance(c, str) and c.strip()]
+    ensure_store(rid, chunk_texts if chunk_texts else None)
+    pairs = hybrid_top_chunks(rid, body.message.strip(), final_k=5)
+    if not pairs:
+        raise HTTPException(status_code=404, detail="No chunks for this roadmap")
+    ctx = "\n\n".join(f"[{i + 1}] {t}" for i, (t, _) in enumerate(pairs))
+    hist = body.history[-3:]
+    hist_block = "\n".join(f"{h.role}: {h.content}" for h in hist)
+    user_blob = f"PDF context:\n{ctx}\n\nPrior turns:\n{hist_block}\n\nuser: {body.message.strip()}"
     client = get_client()
-    q_resp = client.models.embed_content(model=EMBED_MODEL, contents=body.query.strip())
-    q_vec = np.array(embedding_values(q_resp), dtype=np.float64)
-    mat = np.array(body.embeddings, dtype=np.float64)
-    if mat.ndim != 2 or mat.shape[0] != len(body.chunks):
-        raise HTTPException(status_code=400, detail="Invalid embeddings shape")
-    if q_vec.shape[0] != mat.shape[1]:
-        raise HTTPException(status_code=400, detail="Embedding dimension mismatch")
-    ranked = cosine_top_k(q_vec, mat, body.top_k)
-    matches = [
-        {"index": i, "score": round(s, 6), "text": body.chunks[i]}
-        for i, s in ranked
-    ]
-    return {"matches": matches}
+    try:
+        resp = client.models.generate_content(
+            model=chat_model_name(),
+            contents=user_blob,
+            config=types.GenerateContentConfig(
+                system_instruction=(
+                    "You are an expert tutor. Use the provided PDF context to answer "
+                    "the user's question. If the answer isn't in the context, say so."
+                ),
+                temperature=0.4,
+            ),
+        )
+    except genai_errors.ClientError as e:
+        code = getattr(e, "status_code", None) or 502
+        detail = str(e.message) if getattr(e, "message", None) else str(e)
+        raise HTTPException(status_code=code, detail=detail) from e
+    except genai_errors.ServerError as e:
+        raise HTTPException(status_code=502, detail=str(e)) from e
+    reply = (resp.text or "").strip()
+    sources = [{"text": t, "score": round(s, 6)} for t, s in pairs]
+    return {"reply": reply, "sources": sources}
 
 
 @app.get("/health")

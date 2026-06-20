@@ -1,5 +1,23 @@
-import { Loader2, Sparkles } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Calendar, GraduationCap, Loader2, Sparkles, Target } from 'lucide-react'
 import { useMemo, useState } from 'react'
+
+const SUGGESTIONS = [
+  'Master React & TypeScript',
+  'Learn Python for Data Science',
+  'Prepare for System Design interviews',
+  'Become a UI/UX designer',
+  'Build full-stack with Node.js',
+]
+
+const DURATIONS = [
+  { value: '2 weeks', label: '2 weeks · Sprint' },
+  { value: '4 weeks', label: '4 weeks · Focused' },
+  { value: '8 weeks', label: '8 weeks · Standard' },
+  { value: '12 weeks', label: '12 weeks · Deep dive' },
+  { value: '3 months', label: '3 months · Comprehensive' },
+  { value: '6 months', label: '6 months · Mastery' },
+]
 
 const GoalInput = ({ loading, onSubmit }) => {
   const [goal, setGoal] = useState('')
@@ -14,38 +32,87 @@ const GoalInput = ({ loading, onSubmit }) => {
   }
 
   return (
-    <div className="mx-auto max-w-2xl rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 shadow-xl shadow-black/20">
-      <form onSubmit={submit} className="grid gap-3 sm:grid-cols-[1fr_auto]">
-        <div className="grid gap-3">
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: 'easeOut' }}
+      className="glass-card mx-auto max-w-2xl overflow-hidden p-6 sm:p-8"
+    >
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-lumina-500 to-lumina-700 shadow-glow-sm">
+          <Target className="h-5 w-5 text-white" />
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold text-zinc-100">Set your learning goal</h2>
+          <p className="text-sm text-zinc-500">Tell us what you want to learn and how long you have</p>
+        </div>
+      </div>
+      <form onSubmit={submit} className="grid gap-5">
+        <div className="grid gap-2">
+          <label className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
+            <GraduationCap className="h-3.5 w-3.5" />
+            Learning goal
+          </label>
           <input
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
-            placeholder="What do you want to achieve?"
-            className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm outline-none ring-0 placeholder:text-zinc-500 focus:border-zinc-700"
+            placeholder="e.g. Become job-ready in machine learning"
+            disabled={loading}
+            className="input-field"
           />
+          <div className="flex flex-wrap gap-2 pt-1">
+            {SUGGESTIONS.map((s) => (
+              <button
+                key={s}
+                type="button"
+                disabled={loading}
+                onClick={() => setGoal(s)}
+                className={`chip ${goal === s ? 'chip-active' : ''}`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="grid gap-2">
+          <label className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
+            <Calendar className="h-3.5 w-3.5" />
+            Timeline
+          </label>
           <select
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
-            className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm outline-none ring-0 focus:border-zinc-700"
+            disabled={loading}
+            className="input-field cursor-pointer"
           >
-            <option value="2 weeks">2 weeks</option>
-            <option value="4 weeks">4 weeks</option>
-            <option value="8 weeks">8 weeks</option>
-            <option value="12 weeks">12 weeks</option>
-            <option value="3 months">3 months</option>
-            <option value="6 months">6 months</option>
+            {DURATIONS.map((d) => (
+              <option key={d.value} value={d.value}>
+                {d.label}
+              </option>
+            ))}
           </select>
         </div>
-        <button
+        <motion.button
           type="submit"
           disabled={!canSubmit}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-medium text-zinc-950 transition disabled:cursor-not-allowed disabled:opacity-60 sm:h-full"
+          whileHover={canSubmit ? { scale: 1.01 } : {}}
+          whileTap={canSubmit ? { scale: 0.98 } : {}}
+          className="btn-primary w-full sm:w-auto sm:self-end"
         >
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-          {loading ? 'Generating…' : 'Generate Path'}
-        </button>
+          {loading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Building your path…
+            </>
+          ) : (
+            <>
+              <Sparkles className="h-4 w-4" />
+              Generate learning path
+            </>
+          )}
+        </motion.button>
       </form>
-    </div>
+    </motion.div>
   )
 }
 

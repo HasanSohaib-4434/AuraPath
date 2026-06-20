@@ -1,9 +1,8 @@
 import mongoose from 'mongoose'
 
-const ChunkVectorSchema = new mongoose.Schema(
+const ChunkTextSchema = new mongoose.Schema(
   {
     text: { type: String, required: true },
-    vector: { type: [Number], required: true },
   },
   { _id: false },
 )
@@ -16,7 +15,7 @@ const PdfKnowledgeSchema = new mongoose.Schema({
     unique: true,
   },
   filename: { type: String, default: '' },
-  chunks: { type: [ChunkVectorSchema], default: [] },
+  chunks: { type: [ChunkTextSchema], default: [] },
   createdAt: { type: Date, default: Date.now },
 })
 

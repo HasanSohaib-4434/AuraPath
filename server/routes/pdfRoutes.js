@@ -1,6 +1,6 @@
 import express from 'express'
 import multer from 'multer'
-import { queryPdfForRoadmap, uploadPdfForRoadmap } from '../controllers/pdfController.js'
+import { chatPdfForRoadmap, uploadPdfForRoadmap } from '../controllers/pdfController.js'
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -10,6 +10,6 @@ const upload = multer({
 const router = express.Router()
 
 router.post('/:roadmapId/pdf', upload.single('file'), uploadPdfForRoadmap)
-router.post('/:roadmapId/pdf/query', express.json(), queryPdfForRoadmap)
+router.post('/:roadmapId/chat', express.json(), chatPdfForRoadmap)
 
 export default router

@@ -17,6 +17,7 @@ export const uploadPdfForRoadmap = async (req, res) => {
     if (!req.file?.buffer) return res.status(400).json({ error: 'PDF file required' })
 
     const form = new FormData()
+    form.append('roadmap_id', roadmapId)
     form.append('file', req.file.buffer, {
       filename: req.file.originalname || 'document.pdf',
       contentType: req.file.mimetype || 'application/pdf',
@@ -26,27 +27,21 @@ export const uploadPdfForRoadmap = async (req, res) => {
       headers: form.getHeaders(),
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
-      timeout: 120000,
+      timeout: 300000,
     })
 
-    const { chunks, embeddings, filename } = data || {}
-    if (!Array.isArray(chunks) || !Array.isArray(embeddings)) {
+    const chunks = data?.chunks
+    if (!Array.isArray(chunks)) {
       return res.status(502).json({ error: 'Invalid AI service response' })
     }
-    if (chunks.length !== embeddings.length) {
-      return res.status(502).json({ error: 'Chunk and embedding count mismatch' })
-    }
 
-    const bundle = chunks.map((text, i) => ({
-      text: String(text),
-      vector: embeddings[i].map((n) => Number(n)),
-    }))
+    const bundle = chunks.map((text) => ({ text: String(text) }))
 
     const doc = await PdfKnowledge.findOneAndUpdate(
       { roadmapId },
       {
         roadmapId,
-        filename: filename || req.file.originalname || '',
+        filename: data?.filename || req.file.originalname || '',
         chunks: bundle,
       },
       { upsert: true, new: true, setDefaultsOnInsert: true },
@@ -69,43 +64,52 @@ export const uploadPdfForRoadmap = async (req, res) => {
   }
 }
 
-export const queryPdfForRoadmap = async (req, res) => {
+export const chatPdfForRoadmap = async (req, res) => {
   try {
     const { roadmapId } = req.params
     if (!mongoose.Types.ObjectId.isValid(roadmapId)) {
       return res.status(400).json({ error: 'Invalid roadmap id' })
     }
-    const question = typeof req.body?.question === 'string' ? req.body.question.trim() : ''
-    if (!question) return res.status(400).json({ error: 'question is required' })
+    const message = typeof req.body?.message === 'string' ? req.body.message.trim() : ''
+    if (!message) return res.status(400).json({ error: 'message is required' })
 
     const doc = await PdfKnowledge.findOne({ roadmapId })
     if (!doc || !doc.chunks?.length) {
       return res.status(404).json({ error: 'No PDF indexed for this roadmap' })
     }
 
-    const chunkTexts = doc.chunks.map((c) => c.text)
-    const embRows = doc.chunks.map((c) => c.vector)
+    const raw = Array.isArray(req.body?.history) ? req.body.history : []
+    const history = raw
+      .filter(
+        (h) =>
+          h &&
+          (h.role === 'user' || h.role === 'assistant') &&
+          typeof h.content === 'string' &&
+          h.content.trim(),
+      )
+      .slice(-3)
+      .map((h) => ({ role: h.role, content: h.content.trim() }))
+
+    const chunkTexts = doc.chunks.map((c) => String(c?.text || '').trim()).filter(Boolean)
 
     const { data } = await axios.post(
-      `${aiBase()}/search`,
+      `${aiBase()}/chat`,
       {
-        query: question,
+        roadmap_id: String(roadmapId),
+        message,
+        history,
         chunks: chunkTexts,
-        embeddings: embRows,
-        top_k: 5,
       },
-      { timeout: 60000 },
+      { timeout: 120000 },
     )
 
-    const matches = Array.isArray(data?.matches) ? data.matches : []
-    const reply = matches.length
-      ? matches.map((m) => m.text || '').filter(Boolean).join('\n\n---\n\n')
-      : 'No relevant passages found.'
-
-    return res.json({ matches, reply })
+    return res.json({
+      reply: data?.reply || '',
+      sources: Array.isArray(data?.sources) ? data.sources : [],
+    })
   } catch (e) {
     const d = e?.response?.data?.detail
-    let msg = e?.message || 'Search failed'
+    let msg = e?.message || 'Chat failed'
     if (typeof d === 'string') msg = d
     else if (Array.isArray(d)) msg = d.map((x) => x?.msg || JSON.stringify(x)).join(' ')
     else if (d && typeof d === 'object') msg = JSON.stringify(d)
