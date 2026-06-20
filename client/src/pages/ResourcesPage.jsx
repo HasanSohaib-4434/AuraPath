@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ExternalLink, Filter, Layers, Loader2, Search, Video } from 'lucide-react'
+import { ExternalLink, Layers, Loader2, Search, Video } from 'lucide-react'
 import ResourceCard from '../components/ResourceCard.jsx'
 import YouTubeModal from '../components/YouTubeModal.jsx'
 import { api } from '../utils/api.js'
@@ -73,7 +73,7 @@ const ResourcesPage = ({ roadmap: initialRoadmap, roadmapId, onNavigate, onYoutu
   if (loading && !all.length) {
     return (
       <div className="flex justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-aura-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -81,9 +81,9 @@ const ResourcesPage = ({ roadmap: initialRoadmap, roadmapId, onNavigate, onYoutu
   return (
     <div>
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl font-bold text-zinc-100 sm:text-3xl">Resources hub</h1>
-        <p className="mt-2 text-sm text-zinc-400">
-          All links and videos from <span className="text-aura-300">{roadmap?.title || 'your path'}</span>
+        <h1 className="text-2xl font-bold text-ink-primary sm:text-3xl">Resources hub</h1>
+        <p className="mt-2 text-sm text-ink-secondary">
+          All links and videos from <span className="text-primary">{roadmap?.title || 'your path'}</span>
         </p>
       </div>
 
@@ -91,19 +91,19 @@ const ResourcesPage = ({ roadmap: initialRoadmap, roadmapId, onNavigate, onYoutu
         <>
           <div className="mb-6 grid grid-cols-3 gap-2 sm:gap-3">
             <div className="glass-card p-3 text-center sm:p-4">
-              <div className="text-xl font-bold text-zinc-100">{stats.total}</div>
-              <div className="text-[10px] text-zinc-500 sm:text-xs">Total</div>
+              <div className="text-xl font-bold text-ink-primary">{stats.total}</div>
+              <div className="text-[10px] text-ink-secondary sm:text-xs">Total</div>
             </div>
             <div className="glass-card p-3 text-center sm:p-4">
-              <div className="flex items-center justify-center gap-1 text-xl font-bold text-red-300">
+              <div className="flex items-center justify-center gap-1 text-xl font-bold text-primary">
                 <Video className="h-4 w-4" />
                 {stats.videos}
               </div>
-              <div className="text-[10px] text-zinc-500 sm:text-xs">Videos</div>
+              <div className="text-[10px] text-ink-secondary sm:text-xs">Videos</div>
             </div>
             <div className="glass-card p-3 text-center sm:p-4">
-              <div className="text-xl font-bold text-sky-300">{stats.docs}</div>
-              <div className="text-[10px] text-zinc-500 sm:text-xs">Docs</div>
+              <div className="text-xl font-bold text-primary">{stats.docs}</div>
+              <div className="text-[10px] text-ink-secondary sm:text-xs">Docs</div>
             </div>
           </div>
 
@@ -126,7 +126,7 @@ const ResourcesPage = ({ roadmap: initialRoadmap, roadmapId, onNavigate, onYoutu
 
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <div className="relative min-w-0 flex-1 sm:min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-secondary" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -143,11 +143,11 @@ const ResourcesPage = ({ roadmap: initialRoadmap, roadmapId, onNavigate, onYoutu
           {byLevel.map(([levelIndex, { title, items }]) => (
             <section key={levelIndex} className="mb-8">
               <div className="mb-3 flex items-center gap-2">
-                <Layers className="h-4 w-4 text-aura-400" />
-                <h2 className="text-sm font-semibold text-zinc-200">
+                <Layers className="h-4 w-4 text-primary" />
+                <h2 className="text-sm font-semibold text-ink-primary">
                   Level {levelIndex + 1}: {title}
                 </h2>
-                <span className="text-xs text-zinc-500">({items.length})</span>
+                <span className="text-xs text-ink-secondary">({items.length})</span>
               </div>
               <ul className="grid gap-3 sm:grid-cols-2">
                 {items.map((r, i) => (
@@ -164,14 +164,14 @@ const ResourcesPage = ({ roadmap: initialRoadmap, roadmapId, onNavigate, onYoutu
           ))}
 
           {!filtered.length ? (
-            <p className="text-center text-sm text-zinc-500">No resources match your search. Clear filters to see all.</p>
+            <p className="text-center text-sm text-ink-secondary">No resources match your search. Clear filters to see all.</p>
           ) : null}
         </>
       ) : (
         <div className="glass-card py-12 text-center sm:py-16">
-          <Video className="mx-auto mb-4 h-12 w-12 text-zinc-600" />
-          <h2 className="text-lg font-semibold text-zinc-200">No resources on this path yet</h2>
-          <p className="mx-auto mt-2 max-w-md text-sm text-zinc-500">
+          <Video className="mx-auto mb-4 h-12 w-12 text-ink-secondary" />
+          <h2 className="text-lg font-semibold text-ink-primary">No resources on this path yet</h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-ink-secondary">
             Generate a new learning path — AuraPath will add videos, docs, and tutorials to each level. Older paths may need
             to be recreated.
           </p>

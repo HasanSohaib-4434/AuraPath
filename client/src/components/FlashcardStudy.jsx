@@ -64,11 +64,11 @@ const FlashcardStudy = ({ roadmapId, pdfReady }) => {
   return (
     <div className="glass-card p-5">
       <div className="mb-3 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm font-semibold text-zinc-200">
-          <Layers className="h-4 w-4 text-cyan-400" />
+        <div className="flex items-center gap-2 text-sm font-semibold text-ink-primary">
+          <Layers className="h-4 w-4 text-primary" />
           Flashcards
           {dueCount > 0 ? (
-            <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] text-amber-300">{dueCount} due</span>
+            <span className="rounded-full bg-accent-muted px-2 py-0.5 text-[10px] text-accent">{dueCount} due</span>
           ) : null}
         </div>
         <div className="flex gap-2">
@@ -84,17 +84,17 @@ const FlashcardStudy = ({ roadmapId, pdfReady }) => {
       </div>
 
       {!cards.length ? (
-        <p className="text-sm text-zinc-500">Generate flashcards from your path or PDF material.</p>
+        <p className="text-sm text-ink-secondary">Generate flashcards from your path or PDF material.</p>
       ) : (
         <>
           <motion.button
             type="button"
             whileTap={{ scale: 0.99 }}
             onClick={() => setFlipped((f) => !f)}
-            className="mb-3 flex min-h-[120px] w-full flex-col items-center justify-center rounded-xl border border-surface-border bg-surface-elevated p-4 text-center"
+            className="mb-3 flashcard-face"
           >
-            <span className="text-sm text-zinc-100">{flipped ? card.back : card.front}</span>
-            <span className="mt-2 text-xs text-zinc-500">Tap to flip · {idx + 1}/{cards.length}</span>
+            <span className="text-sm text-ink-primary">{flipped ? card.back : card.front}</span>
+            <span className="mt-2 text-xs text-ink-secondary">Tap to flip · {idx + 1}/{cards.length}</span>
           </motion.button>
           {flipped ? (
             <div className="flex flex-wrap justify-center gap-2">
@@ -109,7 +109,7 @@ const FlashcardStudy = ({ roadmapId, pdfReady }) => {
               ))}
             </div>
           ) : (
-            <button type="button" onClick={() => setFlipped(true)} className="mx-auto flex items-center gap-1 text-xs text-zinc-500">
+            <button type="button" onClick={() => setFlipped(true)} className="mx-auto flex items-center gap-1 text-xs text-ink-secondary">
               <RotateCcw className="h-3 w-3" /> Reveal answer
             </button>
           )}

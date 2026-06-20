@@ -22,11 +22,11 @@ const CertificateModal = ({ open, onClose, title, progressPct }) => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="glass-card mb-8 border-emerald-500/30 bg-emerald-500/5 p-6 text-center"
+      className="celebration-panel mb-8 p-6 text-center"
     >
-      <Award className="mx-auto mb-3 h-10 w-10 text-emerald-400" />
-      <h3 className="text-lg font-bold text-zinc-100">Path complete!</h3>
-      <p className="mt-2 text-sm text-zinc-400">Download your completion certificate.</p>
+      <Award className="mx-auto mb-3 h-10 w-10 text-accent" />
+      <h3 className="text-lg font-bold text-ink-primary">Path complete!</h3>
+      <p className="mt-2 text-sm text-ink-secondary">Download your completion certificate.</p>
       <div className="mt-4 flex justify-center gap-3">
         <motion.button type="button" whileTap={{ scale: 0.98 }} onClick={download} className="btn-primary inline-flex items-center gap-2">
           <Download className="h-4 w-4" />

@@ -39,12 +39,12 @@ const PomodoroTimer = ({ roadmapId, onComplete }) => {
 
   return (
     <div className="glass-card p-4">
-      <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-zinc-200">
-        <Timer className="h-4 w-4 text-orange-400" />
+      <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-ink-primary">
+        <Timer className="h-4 w-4 text-accent" />
         Pomodoro · {mode === 'work' ? 'Focus' : 'Break'}
       </div>
       <div className="text-center">
-        <div className="text-3xl font-bold tabular-nums text-zinc-100">
+        <div className="text-3xl font-bold tabular-nums text-ink-primary">
           {mm}:{ss}
         </div>
         <motion.button

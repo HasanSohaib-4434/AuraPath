@@ -63,7 +63,7 @@ const MockInterview = ({ roadmapId }) => {
   if (!questions) {
     return (
       <div className="glass-card space-y-3 p-4">
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-ink-secondary">
           Practice oral exam questions. {speechOk ? 'Use the mic button to speak answers, or type them.' : 'Use Chrome/Edge for mic support, or type answers.'}
         </p>
         <motion.button type="button" whileTap={{ scale: 0.98 }} onClick={start} disabled={loading} className="btn-secondary w-full text-sm">
@@ -76,9 +76,9 @@ const MockInterview = ({ roadmapId }) => {
 
   if (idx >= questions.length) {
     return (
-      <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center text-sm text-emerald-200">
+      <div className="rounded-xl border border-success/30 bg-success-muted p-4 text-center text-sm text-success">
         Mock interview complete! Great practice.
-        <button type="button" onClick={() => setQuestions(null)} className="mt-2 block w-full text-xs text-zinc-400 underline">
+        <button type="button" onClick={() => setQuestions(null)} className="mt-2 block w-full text-xs text-ink-secondary underline">
           Start again
         </button>
       </div>
@@ -88,23 +88,23 @@ const MockInterview = ({ roadmapId }) => {
   return (
     <div className="glass-card space-y-3 p-4">
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-sm font-semibold text-zinc-200">
-          <Mic className="h-4 w-4 text-rose-400" />
+        <div className="flex items-center gap-2 text-sm font-semibold text-ink-primary">
+          <Mic className="h-4 w-4 text-primary" />
           Mock interview {idx + 1}/{questions.length}
         </div>
         <ListenButton
           text={questionText}
           messageKey={`mock-q-${idx}`}
-          className="!mt-0 text-zinc-500 hover:text-aura-300"
+          className="!mt-0 text-ink-secondary hover:text-primary"
         />
       </div>
 
-      <p className="text-sm text-zinc-300">{questions[idx]}</p>
+      <p className="text-sm text-ink-secondary">{questions[idx]}</p>
 
       {!feedback ? (
         <>
-          <div className="rounded-xl border border-surface-border/80 bg-surface/40 px-3 py-2 text-xs text-zinc-500">
-            <strong className="text-zinc-400">How to use the mic:</strong>
+          <div className="rounded-xl border border-subtle/80 bg-surface/40 px-3 py-2 text-xs text-ink-secondary">
+            <strong className="text-ink-primary">How to use the mic:</strong>
             <ol className="mt-1 list-inside list-decimal space-y-0.5">
               <li>Tap the <Mic className="inline h-3 w-3" /> button (it turns red)</li>
               <li>Allow microphone when the browser asks</li>
@@ -112,7 +112,7 @@ const MockInterview = ({ roadmapId }) => {
               <li>Tap Submit answer (or edit the text first)</li>
             </ol>
             {!speechOk ? (
-              <p className="mt-2 text-amber-400/90">Mic works best in Google Chrome or Microsoft Edge on desktop.</p>
+              <p className="mt-2 text-warning/90">Mic works best in Google Chrome or Microsoft Edge on desktop.</p>
             ) : null}
           </div>
 
@@ -132,7 +132,7 @@ const MockInterview = ({ roadmapId }) => {
         </>
       ) : (
         <>
-          <div className="rounded-xl bg-surface-elevated p-3 text-sm text-zinc-300 whitespace-pre-wrap">{feedback}</div>
+          <div className="rounded-xl bg-surface-raised p-3 text-sm text-ink-secondary whitespace-pre-wrap">{feedback}</div>
           <button type="button" onClick={next} className="btn-secondary w-full text-sm">
             Next question
           </button>

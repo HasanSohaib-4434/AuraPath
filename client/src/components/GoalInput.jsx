@@ -48,32 +48,32 @@ const GoalInput = ({ loading, onSubmit, onCompare, compact = false, initialGoal 
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: 'easeOut' }}
-      className={`glass-card mx-auto max-w-2xl overflow-hidden ${compact ? 'mt-6 p-5' : 'p-6 sm:p-8'}`}
+      className={`glass-card mx-auto max-w-2xl ${compact ? 'mt-6' : ''}`}
     >
       {!compact ? (
         <div className="mb-6 flex items-center gap-3">
           <motion.div
             animate={focused ? { scale: 1.05 } : { scale: 1 }}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-aura-500 to-aura-700 shadow-glow-sm"
+            className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary shadow-glow-sm"
           >
-            <Target className="h-5 w-5 text-white" />
+            <Target className="h-5 w-5 text-on-primary" />
           </motion.div>
           <div>
-            <h2 className="text-lg font-semibold text-zinc-100">Set your learning goal</h2>
-            <p className="text-sm text-zinc-500">AuraPath will design your curriculum</p>
+            <h2 className="text-lg font-semibold text-ink-primary">Set your learning goal</h2>
+            <p className="text-sm text-ink-secondary">AuraPath will design your curriculum</p>
           </div>
         </div>
       ) : (
-        <p className="mb-4 text-sm font-medium text-zinc-400">Start a new path</p>
+        <p className="mb-4 text-sm font-medium text-ink-secondary">Start a new path</p>
       )}
       <form onSubmit={submit} className="grid gap-5">
         <div className="grid gap-2">
           <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
+            <label className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-ink-secondary">
               <GraduationCap className="h-3.5 w-3.5" />
               Learning goal
             </label>
-            <span className={`text-xs transition ${goalLen > 2 ? 'text-emerald-400' : 'text-zinc-600'}`}>
+            <span className={`text-xs transition ${goalLen > 2 ? 'text-success' : 'text-ink-secondary'}`}>
               {goalLen > 0 ? `${goalLen} chars` : 'Min 3 chars'}
             </span>
           </div>
@@ -102,7 +102,7 @@ const GoalInput = ({ loading, onSubmit, onCompare, compact = false, initialGoal 
           </div>
         </div>
         <div className="grid gap-2">
-          <label className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
+          <label className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-ink-secondary">
             <Calendar className="h-3.5 w-3.5" />
             Timeline
           </label>
@@ -124,7 +124,7 @@ const GoalInput = ({ loading, onSubmit, onCompare, compact = false, initialGoal 
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="grid gap-2">
-            <label className="text-xs font-medium uppercase tracking-wide text-zinc-500">Exam / deadline (optional)</label>
+            <label className="text-xs font-medium uppercase tracking-wide text-ink-secondary">Exam / deadline (optional)</label>
             <input
               type="date"
               value={examDate}
@@ -134,7 +134,7 @@ const GoalInput = ({ loading, onSubmit, onCompare, compact = false, initialGoal 
             />
           </div>
           <div className="grid gap-2">
-            <label className="text-xs font-medium uppercase tracking-wide text-zinc-500">Path language</label>
+            <label className="text-xs font-medium uppercase tracking-wide text-ink-secondary">Path language</label>
             <select value={language} onChange={(e) => setLanguage(e.target.value)} disabled={loading} className="input-field py-2.5">
               <option value="en">English</option>
               <option value="es">Spanish</option>

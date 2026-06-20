@@ -364,17 +364,17 @@ const App = () => {
         <motion.div
           animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
           transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-aura-600/20 blur-3xl"
+          className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-primary/20 blur-3xl"
         />
         <motion.div
           animate={{ x: [0, -25, 0], y: [0, 25, 0] }}
           transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -right-20 top-40 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl"
+          className="absolute -right-20 top-40 h-80 w-80 rounded-full bg-primary-soft blur-3xl"
         />
         <motion.div
           animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
           transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl"
+          className="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-primary-muted blur-3xl"
         />
       </div>
 
@@ -436,7 +436,7 @@ const App = () => {
                 />
               ) : (
                 <div className="glass-card py-20 text-center">
-                  <p className="text-zinc-400">No active path. Create one from Home or open from My Paths.</p>
+                  <p className="text-ink-secondary">No active path. Create one from Home or open from My Paths.</p>
                   <motion.button type="button" whileTap={{ scale: 0.98 }} onClick={() => setPage('home')} className="btn-primary mt-4">
                     Go to Home
                   </motion.button>
@@ -454,7 +454,7 @@ const App = () => {
                   onRoadmapUpdate={setRoadmap}
                 />
               ) : (
-                <div className="glass-card py-20 text-center text-zinc-400">Open a path to browse resources.</div>
+                <div className="glass-card py-20 text-center text-ink-secondary">Open a path to browse resources.</div>
               )
             ) : null}
 
@@ -509,13 +509,13 @@ const App = () => {
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.92 }}
           onClick={() => setChatOpen(true)}
-          className="fixed bottom-20 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-aura-600 to-aura-500 text-white shadow-glow ring-4 ring-aura-500/20 md:bottom-8 md:right-8"
+          className="fixed bottom-20 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-on-primary shadow-glow ring-4 ring-primary/20 md:bottom-8 md:right-8"
           aria-label="Open study assistant"
         >
           <motion.span
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="absolute inset-0 rounded-full bg-aura-400/30"
+            className="absolute inset-0 rounded-full bg-primary/30"
           />
           <Sparkles className="relative h-6 w-6" />
         </motion.button>

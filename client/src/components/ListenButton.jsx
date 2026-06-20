@@ -24,7 +24,7 @@ const ListenButton = ({ text, messageKey, className = '' }) => {
       type="button"
       onClick={handleClick}
       className={`mt-2 inline-flex items-center gap-1 text-xs transition ${
-        active ? 'font-medium text-red-300 hover:text-red-200' : 'opacity-70 hover:opacity-100'
+        active ? 'font-medium text-danger hover:text-danger/80' : 'opacity-70 hover:opacity-100'
       } ${className}`}
       aria-label={active ? 'Stop speaking' : 'Listen to response'}
     >

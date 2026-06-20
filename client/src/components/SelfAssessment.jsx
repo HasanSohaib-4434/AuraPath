@@ -16,9 +16,9 @@ const SelfAssessment = ({ roadmapId, before, after, onSave }) => {
   if (after != null && before != null) {
     const growth = after - before
     return (
-      <div className="flex items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm">
-        <TrendingUp className="h-5 w-5 text-emerald-400" />
-        <span className="text-zinc-300">
+      <div className="flex items-center gap-3 rounded-xl border border-success/30 bg-success-muted p-3 text-sm">
+        <TrendingUp className="h-5 w-5 text-success" />
+        <span className="text-ink-secondary">
           Confidence: {before}/10 → {after}/10
           {growth > 0 ? ` (+${growth})` : ''}
         </span>
@@ -28,7 +28,7 @@ const SelfAssessment = ({ roadmapId, before, after, onSave }) => {
 
   return (
     <div className="glass-card p-4">
-      <p className="mb-2 text-sm font-medium text-zinc-200">
+      <p className="mb-2 text-sm font-medium text-ink-primary">
         {before == null ? 'Rate your confidence before starting (1–10)' : 'Rate your confidence now (1–10)'}
       </p>
       <input
@@ -37,11 +37,11 @@ const SelfAssessment = ({ roadmapId, before, after, onSave }) => {
         max={10}
         value={val}
         onChange={(e) => setVal(Number(e.target.value))}
-        className="w-full accent-aura-500"
+        className="w-full accent-primary"
       />
-      <div className="mt-1 flex justify-between text-xs text-zinc-500">
+      <div className="mt-1 flex justify-between text-xs text-ink-secondary">
         <span>Beginner</span>
-        <span className="font-bold text-aura-400">{val}/10</span>
+        <span className="font-bold text-primary">{val}/10</span>
         <span>Expert</span>
       </div>
       <motion.button

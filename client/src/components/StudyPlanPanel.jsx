@@ -19,7 +19,7 @@ const StudyPlanPanel = ({ roadmapId }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-zinc-500">
+      <div className="flex items-center gap-2 text-sm text-ink-secondary">
         <Loader2 className="h-4 w-4 animate-spin" /> Building study schedule…
       </div>
     )
@@ -27,9 +27,9 @@ const StudyPlanPanel = ({ roadmapId }) => {
   if (!plan?.weeks?.length) return null
 
   return (
-    <div className="mt-6 rounded-2xl border border-surface-border bg-surface/60 p-4">
-      <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-zinc-200">
-        <CalendarDays className="h-4 w-4 text-aura-400" />
+    <div className="mt-6 rounded-2xl border border-subtle bg-surface/60 p-4">
+      <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-ink-primary">
+        <CalendarDays className="h-4 w-4 text-primary" />
         Weekly study plan
       </div>
       <div className="space-y-3">
@@ -38,13 +38,13 @@ const StudyPlanPanel = ({ roadmapId }) => {
             key={w.week}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-xl border border-surface-border/80 bg-surface-card/50 p-3"
+            className="rounded-xl border border-subtle/80 bg-surface/50 p-3"
           >
             <div className="mb-1 flex items-center justify-between">
-              <span className="text-sm font-medium text-aura-300">{w.label}</span>
-              <span className="text-xs text-zinc-500">{w.taskCount} tasks</span>
+              <span className="text-sm font-medium text-primary">{w.label}</span>
+              <span className="text-xs text-ink-secondary">{w.taskCount} tasks</span>
             </div>
-            <div className="text-xs text-zinc-400">
+            <div className="text-xs text-ink-secondary">
               {w.levels?.map((l) => l.title).join(' · ')}
             </div>
           </motion.div>

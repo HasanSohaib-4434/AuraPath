@@ -37,7 +37,7 @@ const YouTubeModal = ({ open, url, title, onClose }) => {
         <div className="fixed inset-0 z-[10050] flex items-center justify-center p-4">
           <motion.button
             type="button"
-            className="absolute inset-0 bg-black/85 backdrop-blur-sm"
+            className="absolute inset-0 overlay-backdrop backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -52,14 +52,14 @@ const YouTubeModal = ({ open, url, title, onClose }) => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.92 }}
             transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-            className="relative z-[10051] w-full max-w-4xl overflow-hidden rounded-2xl border border-surface-border bg-surface shadow-2xl"
+            className="relative z-[10051] w-full max-w-4xl overflow-hidden rounded-2xl border border-subtle bg-surface shadow-card"
           >
-            <div className="flex items-center justify-between border-b border-surface-border px-4 py-3">
-              <h3 className="truncate pr-4 text-sm font-medium text-zinc-200">{title || 'Video'}</h3>
+            <div className="flex items-center justify-between border-b border-subtle px-4 py-3">
+              <h3 className="truncate pr-4 text-sm font-medium text-ink-primary">{title || 'Video'}</h3>
               <button
                 type="button"
                 onClick={onClose}
-                className="shrink-0 rounded-lg p-1.5 text-zinc-400 transition hover:bg-surface-elevated hover:text-zinc-100"
+                className="shrink-0 rounded-lg p-1.5 text-ink-secondary transition hover:bg-surface-raised hover:text-ink-primary"
                 aria-label="Close"
               >
                 <X className="h-5 w-5" />

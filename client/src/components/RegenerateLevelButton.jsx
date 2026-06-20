@@ -27,7 +27,7 @@ const RegenerateLevelButton = ({ roadmapId, levelIndex, onUpdate }) => {
       whileTap={{ scale: 0.98 }}
       disabled={loading}
       onClick={run}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-sky-500/30 bg-sky-500/10 px-3 py-1.5 text-xs font-medium text-sky-300"
+      className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary-muted px-3 py-1.5 text-xs font-medium text-primary"
     >
       {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
       Refine level

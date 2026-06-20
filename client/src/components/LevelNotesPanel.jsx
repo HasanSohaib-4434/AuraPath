@@ -11,8 +11,8 @@ const LevelNotesPanel = ({ levelIndex, notes, pinned, resources, onNotesChange, 
   }
 
   return (
-    <div className="mt-4 space-y-3 rounded-xl border border-surface-border/60 bg-surface/30 p-3">
-      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
+    <div className="mt-4 space-y-3 rounded-xl border border-subtle/60 bg-surface/30 p-3">
+      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-ink-secondary">
         <StickyNote className="h-3.5 w-3.5" />
         Notes
       </div>
@@ -26,7 +26,7 @@ const LevelNotesPanel = ({ levelIndex, notes, pinned, resources, onNotesChange, 
       />
       {resources?.length ? (
         <div>
-          <div className="mb-2 flex items-center gap-2 text-xs text-zinc-500">
+          <div className="mb-2 flex items-center gap-2 text-xs text-ink-secondary">
             <Pin className="h-3 w-3" />
             Pin resources
           </div>

@@ -32,8 +32,8 @@ const MyPathsPage = ({ onOpenPath, activeId }) => {
     <div>
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100 sm:text-3xl">My Paths</h1>
-          <p className="mt-2 text-sm text-zinc-400">All learning roadmaps saved to your AuraPath account.</p>
+          <h1 className="text-2xl font-bold text-ink-primary sm:text-3xl">My Paths</h1>
+          <p className="mt-2 text-sm text-ink-secondary">All learning roadmaps saved to your AuraPath account.</p>
         </div>
         <motion.button
           type="button"
@@ -48,18 +48,18 @@ const MyPathsPage = ({ onOpenPath, activeId }) => {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center gap-2 py-20 text-zinc-500">
-          <Loader2 className="h-5 w-5 animate-spin text-aura-400" />
+        <div className="flex items-center justify-center gap-2 py-20 text-ink-secondary">
+          <Loader2 className="h-5 w-5 animate-spin text-primary" />
           Loading your paths…
         </div>
       ) : null}
 
-      {err ? <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">{err}</div> : null}
+      {err ? <div className="rounded-xl border border-danger/30 bg-danger-muted p-4 text-sm text-danger">{err}</div> : null}
 
       {!loading && !err && items.length === 0 ? (
         <div className="glass-card py-16 text-center">
-          <BookOpen className="mx-auto mb-3 h-10 w-10 text-zinc-600" />
-          <p className="text-zinc-400">No paths yet. Generate one from Home.</p>
+          <BookOpen className="mx-auto mb-3 h-10 w-10 text-ink-secondary" />
+          <p className="text-ink-secondary">No paths yet. Generate one from Home.</p>
         </div>
       ) : null}
 
@@ -77,23 +77,23 @@ const MyPathsPage = ({ onOpenPath, activeId }) => {
               whileHover={{ y: -4, scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
               onClick={() => onOpenPath(id)}
-              className={`glass-card-interactive group w-full p-5 text-left ${isActive ? 'border-aura-500/40 ring-1 ring-aura-500/20' : ''}`}
+              className={`glass-card-interactive group w-full p-5 text-left ${isActive ? 'border-primary/40 ring-1 ring-primary/20' : ''}`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   {isActive ? (
-                    <span className="mb-2 inline-block rounded-full bg-aura-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-aura-300">
+                    <span className="mb-2 inline-block rounded-full bg-primary-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
                       Active
                     </span>
                   ) : null}
-                  <h3 className="truncate text-base font-semibold text-zinc-100">{item.title}</h3>
+                  <h3 className="truncate text-base font-semibold text-ink-primary">{item.title}</h3>
                   {item.description ? (
-                    <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{item.description}</p>
+                    <p className="mt-1 line-clamp-2 text-xs text-ink-secondary">{item.description}</p>
                   ) : null}
                 </div>
-                <ChevronRight className="h-5 w-5 shrink-0 text-zinc-600 transition group-hover:text-aura-400" />
+                <ChevronRight className="h-5 w-5 shrink-0 text-ink-secondary transition group-hover:text-primary" />
               </div>
-              <div className="mt-4 flex flex-wrap gap-3 text-xs text-zinc-500">
+              <div className="mt-4 flex flex-wrap gap-3 text-xs text-ink-secondary">
                 <span className="inline-flex items-center gap-1">
                   <Layers className="h-3.5 w-3.5" />
                   {item.levelCount} levels

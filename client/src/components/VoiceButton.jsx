@@ -62,7 +62,7 @@ const VoiceButton = ({ onTranscript, disabled, showLabel = false }) => {
 
   if (!isSpeechSupported()) {
     return (
-      <div className="shrink-0 rounded-xl border border-surface-border bg-surface-elevated px-2 py-2 text-[10px] leading-tight text-zinc-500 sm:max-w-[88px]">
+      <div className="shrink-0 rounded-xl border border-subtle bg-surface-raised px-2 py-2 text-[10px] leading-tight text-ink-secondary sm:max-w-[88px]">
         Mic needs Chrome/Edge. Type your answer below.
       </div>
     )
@@ -76,8 +76,8 @@ const VoiceButton = ({ onTranscript, disabled, showLabel = false }) => {
         onClick={toggle}
         className={`rounded-xl p-2.5 transition ${
           listening
-            ? 'animate-pulse bg-red-500/25 text-red-300 ring-2 ring-red-500/50'
-            : 'bg-surface-elevated text-zinc-400 hover:text-aura-300'
+            ? 'animate-pulse bg-danger-muted text-danger ring-2 ring-danger/50'
+            : 'bg-surface-raised text-ink-secondary hover:text-primary'
         } disabled:opacity-40`}
         aria-label={listening ? 'Stop listening' : 'Start voice input'}
         title={listening ? 'Listening… tap to stop' : 'Tap to speak your answer'}
@@ -85,11 +85,11 @@ const VoiceButton = ({ onTranscript, disabled, showLabel = false }) => {
         {listening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
       </button>
       {showLabel ? (
-        <span className={`text-[10px] ${listening ? 'font-medium text-red-300' : 'text-zinc-500'}`}>
+        <span className={`text-[10px] ${listening ? 'font-medium text-danger' : 'text-ink-secondary'}`}>
           {listening ? 'Listening…' : 'Tap mic'}
         </span>
       ) : null}
-      {error ? <span className="max-w-[100px] text-center text-[10px] leading-tight text-amber-400">{error}</span> : null}
+      {error ? <span className="max-w-[100px] text-center text-[10px] leading-tight text-warning">{error}</span> : null}
     </div>
   )
 }

@@ -13,6 +13,7 @@ import {
   X,
 } from 'lucide-react'
 import { useState } from 'react'
+import ThemeToggle from './ThemeToggle.jsx'
 
 export const NAV_ITEMS = [
   { id: 'home', label: 'Home', icon: Home },
@@ -44,20 +45,20 @@ const Navbar = ({ page, onNavigate, hasRoadmap }) => {
         onClick={() => !disabled && go(item.id)}
         whileHover={disabled ? {} : { scale: 1.03 }}
         whileTap={disabled ? {} : { scale: 0.97 }}
-        className={`relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition ${
+        className={`relative flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition ${
           compact ? 'w-full justify-start' : ''
         } ${
           disabled
-            ? 'cursor-not-allowed text-zinc-600 opacity-50'
+            ? 'cursor-not-allowed text-ink-secondary opacity-50'
             : active
-              ? 'text-white'
-              : 'text-zinc-400 hover:text-zinc-200'
+              ? 'text-on-primary'
+              : 'text-ink-secondary hover:text-ink-primary'
         }`}
       >
         {active && !disabled ? (
           <motion.span
             layoutId="nav-pill"
-            className="absolute inset-0 rounded-xl bg-gradient-to-r from-aura-600/90 to-aura-500/80 shadow-glow-sm"
+            className="absolute inset-0 rounded-full bg-primary shadow-glow-sm"
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
           />
         ) : null}
@@ -68,7 +69,7 @@ const Navbar = ({ page, onNavigate, hasRoadmap }) => {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-surface-border/60 bg-surface/85 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-subtle/60 bg-base/90 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <motion.button
           type="button"
@@ -76,29 +77,35 @@ const Navbar = ({ page, onNavigate, hasRoadmap }) => {
           className="flex items-center gap-2.5"
           whileHover={{ scale: 1.02 }}
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-aura-500 to-cyan-500 shadow-glow-sm">
-            <Route className="h-4 w-4 text-white" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary shadow-glow-sm">
+            <Route className="h-4 w-4 text-on-primary" />
           </div>
           <span className="text-lg font-bold tracking-tight">
             <span className="text-gradient-brand">Aura</span>
-            <span className="text-zinc-100">Path</span>
+            <span className="text-ink-primary">Path</span>
           </span>
         </motion.button>
 
-        <nav className="hidden items-center gap-1 rounded-2xl border border-surface-border/80 bg-surface-card/50 p-1 lg:flex">
+        <nav className="hidden items-center gap-1 rounded-full border border-subtle/80 bg-surface p-1 lg:flex">
           {NAV_ITEMS.map((item) => (
             <NavLink key={item.id} item={item} />
           ))}
         </nav>
 
-        <button
-          type="button"
-          className="rounded-xl border border-surface-border p-2 text-zinc-400 lg:hidden"
-          onClick={() => setMobileOpen((v) => !v)}
-          aria-label="Menu"
-        >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <div className="hidden lg:block">
+            <ThemeToggle />
+          </div>
+          <ThemeToggle compact />
+          <button
+            type="button"
+            className="rounded-xl border border-subtle p-2 text-ink-secondary lg:hidden"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label="Menu"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -107,7 +114,7 @@ const Navbar = ({ page, onNavigate, hasRoadmap }) => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-surface-border/60 lg:hidden"
+            className="overflow-hidden border-t border-subtle/60 lg:hidden"
           >
             <div className="flex flex-col gap-1 px-4 py-3">
               {NAV_ITEMS.map((item) => (

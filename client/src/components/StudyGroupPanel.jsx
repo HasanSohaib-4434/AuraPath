@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Copy, Loader2, Users } from 'lucide-react'
+import { Copy, Users } from 'lucide-react'
 import { api } from '../utils/api.js'
 
 const StudyGroupPanel = ({ roadmapId }) => {
@@ -46,8 +45,8 @@ const StudyGroupPanel = ({ roadmapId }) => {
 
   return (
     <div className="glass-card p-4">
-      <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-zinc-200">
-        <Users className="h-4 w-4 text-cyan-400" />
+      <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-ink-primary">
+        <Users className="h-4 w-4 text-primary" />
         Study group
       </div>
       {!code ? (
@@ -69,30 +68,32 @@ const StudyGroupPanel = ({ roadmapId }) => {
         </div>
       ) : (
         <div>
-          <div className="flex items-center justify-between rounded-xl bg-surface-elevated px-3 py-2">
-            <span className="font-mono text-lg font-bold text-aura-300">{code}</span>
+          <div className="flex items-center justify-between rounded-xl bg-surface-raised px-3 py-2">
+            <span className="font-mono text-lg font-bold text-primary">{code}</span>
             <button
               type="button"
               onClick={() => navigator.clipboard.writeText(code)}
-              className="text-zinc-500 hover:text-zinc-300"
+              className="text-ink-secondary hover:text-ink-primary"
             >
               <Copy className="h-4 w-4" />
             </button>
           </div>
-          <p className="mt-2 text-xs text-zinc-500">Share this code with classmates</p>
+          <p className="mt-2 text-xs text-ink-secondary">Share this code with classmates</p>
           {board?.leaderboard?.length ? (
             <ul className="mt-3 space-y-1">
               {board.leaderboard.map((m, i) => (
-                <li key={m.sessionId} className="flex justify-between text-xs text-zinc-400">
+                <li key={m.sessionId} className="flex justify-between text-xs text-ink-secondary">
                   <span>
                     #{i + 1} …{m.sessionId}
                   </span>
-                  <span>{m.xp} XP · {m.tasksDone} tasks</span>
+                  <span>
+                    <span className="text-accent">{m.xp} XP</span> · {m.tasksDone} tasks
+                  </span>
                 </li>
               ))}
             </ul>
           ) : (
-            <button type="button" onClick={() => loadBoard(code)} className="mt-2 text-xs text-aura-400 underline">
+            <button type="button" onClick={() => loadBoard(code)} className="mt-2 text-xs text-primary underline">
               Load leaderboard
             </button>
           )}

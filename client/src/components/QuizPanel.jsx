@@ -47,7 +47,7 @@ const QuizPanel = ({ roadmapId, levelIndex, levelTitle, onComplete }) => {
           e.stopPropagation()
           start()
         }}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300"
+        className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary-muted px-3 py-1.5 text-xs font-medium text-primary"
       >
         {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <HelpCircle className="h-3.5 w-3.5" />}
         Take quiz
@@ -56,13 +56,13 @@ const QuizPanel = ({ roadmapId, levelIndex, levelTitle, onComplete }) => {
   }
 
   return (
-    <div className="mt-4 rounded-xl border border-violet-500/20 bg-violet-500/5 p-4" onClick={(e) => e.stopPropagation()}>
-      <div className="mb-3 text-sm font-medium text-violet-200">Quiz: {levelTitle}</div>
+    <div className="mt-4 rounded-xl border border-primary/20 bg-primary-soft p-4" onClick={(e) => e.stopPropagation()}>
+      <div className="mb-3 text-sm font-medium text-ink-primary">Quiz: {levelTitle}</div>
       {!result ? (
         <div className="space-y-4">
           {questions.map((q, qi) => (
             <div key={qi}>
-              <p className="mb-2 text-sm text-zinc-200">{qi + 1}. {q.question}</p>
+              <p className="mb-2 text-sm text-ink-primary">{qi + 1}. {q.question}</p>
               <div className="space-y-1">
                 {(q.options || []).map((opt, oi) => (
                   <label key={oi} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-surface/60">
@@ -72,7 +72,7 @@ const QuizPanel = ({ roadmapId, levelIndex, levelTitle, onComplete }) => {
                       checked={answers[qi] === oi}
                       onChange={() => setAnswers((a) => ({ ...a, [qi]: oi }))}
                     />
-                    <span className="text-zinc-300">{opt}</span>
+                    <span className="text-ink-secondary">{opt}</span>
                   </label>
                 ))}
               </div>
@@ -85,12 +85,12 @@ const QuizPanel = ({ roadmapId, levelIndex, levelTitle, onComplete }) => {
       ) : (
         <div className="text-center">
           {result.passed ? (
-            <CheckCircle2 className="mx-auto mb-2 h-10 w-10 text-emerald-400" />
+            <CheckCircle2 className="mx-auto mb-2 h-10 w-10 text-success" />
           ) : (
-            <XCircle className="mx-auto mb-2 h-10 w-10 text-amber-400" />
+            <XCircle className="mx-auto mb-2 h-10 w-10 text-danger" />
           )}
-          <p className="text-lg font-bold text-zinc-100">{result.score}%</p>
-          <p className="text-sm text-zinc-400">
+          <p className="text-lg font-bold text-ink-primary">{result.score}%</p>
+          <p className="text-sm text-ink-secondary">
             {result.correct}/{result.total} correct {result.passed ? '— Passed!' : '— Try again'}
           </p>
         </div>

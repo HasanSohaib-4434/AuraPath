@@ -41,7 +41,7 @@ const ExplainTaskModal = ({ open, onClose, roadmapId, levelIndex, taskIndex, tas
       subtitle={taskLabel}
       loading={loading}
     >
-      <div className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-300">{text}</div>
+      <div className="whitespace-pre-wrap text-sm leading-relaxed text-ink-secondary">{text}</div>
     </ResponsiveSheet>
   )
 }

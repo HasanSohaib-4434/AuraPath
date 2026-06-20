@@ -35,7 +35,7 @@ const StuckButton = ({ roadmapId, levelIndex, taskIndex, taskLabel }) => {
         type="button"
         title="I'm stuck"
         onClick={load}
-        className="inline-flex items-center gap-1 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2 py-1.5 text-[10px] font-medium text-amber-300 sm:text-xs"
+        className="inline-flex items-center gap-1 rounded-lg border border-primary/30 bg-primary-muted px-2 py-1.5 text-[10px] font-medium text-primary sm:text-xs"
       >
         {loading && !hint ? <Loader2 className="h-3 w-3 animate-spin" /> : <HelpCircle className="h-3 w-3" />}
         Stuck?
@@ -48,7 +48,7 @@ const StuckButton = ({ roadmapId, levelIndex, taskIndex, taskLabel }) => {
         subtitle={taskLabel}
         loading={loading && !hint}
       >
-        <div className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-300">{hint}</div>
+        <div className="whitespace-pre-wrap text-sm leading-relaxed text-ink-secondary">{hint}</div>
       </ResponsiveSheet>
     </>
   )

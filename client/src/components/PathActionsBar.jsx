@@ -108,7 +108,7 @@ const PathActionsBar = ({ roadmapId, onRoadmapUpdate, onShare }) => {
       ) : null}
 
       {shareUrl ? (
-        <span className="flex items-center gap-1 text-xs text-emerald-400">
+        <span className="flex items-center gap-1 text-xs text-success">
           <Link2 className="h-3 w-3" />
           Link copied!
         </span>

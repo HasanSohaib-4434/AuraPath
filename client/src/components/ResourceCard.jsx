@@ -1,59 +1,16 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { BookOpen, Code2, ExternalLink, Play, Video } from 'lucide-react'
+import { BookOpen, ExternalLink, Play, Video } from 'lucide-react'
 import { hostnameLabel, isYoutubeUrl, youtubeThumb } from '../utils/resourceLinks.js'
 
-const typeStyles = {
-  youtube: {
-    border: 'border-red-500/30',
-    bg: 'bg-red-500/5',
-    badge: 'bg-red-500/15 text-red-300',
-    icon: Video,
-    action: 'Watch',
-  },
-  docs: {
-    border: 'border-sky-500/30',
-    bg: 'bg-sky-500/5',
-    badge: 'bg-sky-500/15 text-sky-300',
-    icon: BookOpen,
-    action: 'Read docs',
-  },
-  github: {
-    border: 'border-zinc-500/30',
-    bg: 'bg-zinc-500/5',
-    badge: 'bg-zinc-500/15 text-zinc-300',
-    icon: Code2,
-    action: 'View repo',
-  },
-  course: {
-    border: 'border-aura-500/30',
-    bg: 'bg-aura-500/5',
-    badge: 'bg-aura-500/15 text-aura-300',
-    icon: BookOpen,
-    action: 'Open course',
-  },
-  article: {
-    border: 'border-cyan-500/25',
-    bg: 'bg-cyan-500/5',
-    badge: 'bg-cyan-500/15 text-cyan-300',
-    icon: ExternalLink,
-    action: 'Open',
-  },
-  link: {
-    border: 'border-surface-border',
-    bg: 'bg-surface/40',
-    badge: 'bg-surface-elevated text-zinc-400',
-    icon: ExternalLink,
-    action: 'Open',
-  },
-}
+const cardClass =
+  'overflow-hidden rounded-xl border border-subtle bg-surface-raised transition hover:border-primary/30 hover:shadow-glow-sm'
 
 const ResourceCard = ({ resource, index, subtitle, onYoutubeClick }) => {
   const { title, url, type } = resource
   const isYoutube = isYoutubeUrl(url)
-  const displayType = isYoutube ? 'youtube' : type
-  const style = typeStyles[displayType] || typeStyles.link
-  const Icon = style.icon
+  const displayType = isYoutube ? 'youtube' : type || 'link'
+  const Icon = isYoutube ? Video : BookOpen
   const thumb = isYoutube ? youtubeThumb(url) : ''
   const [thumbFailed, setThumbFailed] = useState(false)
 
@@ -84,11 +41,11 @@ const ResourceCard = ({ resource, index, subtitle, onYoutubeClick }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04 }}
       whileHover={{ y: -2, scale: 1.01 }}
-      className={`overflow-hidden rounded-xl border ${style.border} ${style.bg}`}
+      className={cardClass}
     >
-      <Wrapper {...wrapperProps} className="group flex w-full gap-3 p-3 text-left transition">
+      <Wrapper {...wrapperProps} className="group flex w-full gap-3 p-4 text-left transition">
         {thumb && !thumbFailed ? (
-          <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded-lg bg-zinc-900">
+          <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded-lg bg-base">
             <img
               src={thumb}
               alt=""
@@ -97,28 +54,28 @@ const ResourceCard = ({ resource, index, subtitle, onYoutubeClick }) => {
               className="h-full w-full object-cover transition group-hover:scale-105"
               onError={() => setThumbFailed(true)}
             />
-            <div className="absolute inset-0 flex items-center justify-center bg-black/35 transition group-hover:bg-black/20">
-              <Play className="h-7 w-7 fill-white text-white drop-shadow" />
+            <div className="absolute inset-0 flex items-center justify-center bg-base/40 transition group-hover:bg-base/25">
+              <Play className="h-7 w-7 fill-ink-primary text-ink-primary drop-shadow" />
             </div>
           </div>
         ) : (
-          <div className="flex h-16 w-12 shrink-0 items-center justify-center rounded-lg bg-surface-elevated">
-            <Icon className="h-5 w-5 text-zinc-400 transition group-hover:text-aura-300" />
+          <div className="flex h-16 w-12 shrink-0 items-center justify-center rounded-lg bg-primary-muted">
+            <Icon className="h-5 w-5 text-primary transition group-hover:text-primary-hover" />
           </div>
         )}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${style.badge}`}>
+            <span className="rounded-full bg-primary-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
               {displayType}
             </span>
-            <span className="truncate text-[11px] text-zinc-500">{hostnameLabel(url)}</span>
+            <span className="truncate text-[11px] text-ink-secondary">{hostnameLabel(url)}</span>
           </div>
-          <div className="mt-1 line-clamp-2 text-sm font-medium text-zinc-100 transition group-hover:text-white">
+          <div className="mt-1 line-clamp-2 text-sm font-medium text-ink-primary transition group-hover:text-primary-hover">
             {title}
           </div>
-          {subtitle ? <div className="mt-0.5 text-[11px] text-zinc-500">{subtitle}</div> : null}
-          <div className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-aura-300">
-            {useInlinePlayer ? 'Watch here' : style.action}
+          {subtitle ? <div className="mt-0.5 text-[11px] text-ink-secondary">{subtitle}</div> : null}
+          <div className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-primary">
+            {useInlinePlayer ? 'Watch here' : 'Open'}
             {!useInlinePlayer ? <ExternalLink className="h-3 w-3" /> : <Play className="h-3 w-3 fill-current" />}
           </div>
         </div>

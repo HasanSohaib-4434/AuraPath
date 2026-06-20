@@ -35,25 +35,25 @@ const OnboardingTour = ({ onDone }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[20000] flex items-end justify-center bg-black/70 p-4 backdrop-blur-sm sm:items-center"
+        className="fixed inset-0 z-[20000] flex items-end justify-center overlay-backdrop p-4 backdrop-blur-sm sm:items-center"
       >
         <motion.div
           initial={{ y: 40 }}
           animate={{ y: 0 }}
-          className="w-full max-w-md rounded-2xl border border-surface-border bg-surface p-6 shadow-2xl"
+          className="w-full max-w-md rounded-2xl border border-subtle bg-surface p-6 shadow-2xl"
         >
           <div className="mb-4 flex items-start justify-between">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-aura-400">
+              <p className="text-xs font-medium uppercase tracking-wide text-primary">
                 Step {step + 1} of {STEPS.length}
               </p>
-              <h2 className="mt-1 text-lg font-bold text-zinc-100">{STEPS[step].title}</h2>
+              <h2 className="mt-1 text-lg font-bold text-ink-primary">{STEPS[step].title}</h2>
             </div>
-            <button type="button" onClick={finish} className="text-zinc-500 hover:text-zinc-300">
+            <button type="button" onClick={finish} className="text-ink-secondary hover:text-ink-primary">
               <X className="h-5 w-5" />
             </button>
           </div>
-          <p className="text-sm leading-relaxed text-zinc-400">{STEPS[step].body}</p>
+          <p className="text-sm leading-relaxed text-ink-secondary">{STEPS[step].body}</p>
           <div className="mt-6 flex gap-2">
             {step > 0 ? (
               <button type="button" onClick={() => setStep((s) => s - 1)} className="btn-secondary flex-1 text-sm">

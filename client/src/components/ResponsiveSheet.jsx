@@ -26,7 +26,7 @@ const ResponsiveSheet = ({ open, onClose, title, icon: Icon, subtitle, loading, 
         <div className="fixed inset-0 z-[10050] flex items-end justify-center sm:items-center sm:p-4">
           <motion.button
             type="button"
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            className="absolute inset-0 overlay-backdrop backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -41,32 +41,32 @@ const ResponsiveSheet = ({ open, onClose, title, icon: Icon, subtitle, loading, 
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: '100%' }}
             transition={{ type: 'spring', damping: 32, stiffness: 340 }}
-            className="relative z-[10051] flex max-h-[min(88vh,720px)] w-full flex-col overflow-hidden rounded-t-2xl border border-surface-border bg-surface shadow-2xl sm:max-h-[85vh] sm:w-[min(100%,540px)] sm:rounded-2xl"
+            className="relative z-[10051] flex max-h-[min(88vh,720px)] w-full flex-col overflow-hidden rounded-t-xl border border-subtle bg-surface shadow-card sm:max-h-[85vh] sm:w-[min(100%,540px)] sm:rounded-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex shrink-0 items-start justify-between gap-3 border-b border-surface-border px-4 py-4 sm:px-5">
+            <div className="flex shrink-0 items-start justify-between gap-3 border-b border-subtle/60 px-5 py-4">
               <div className="flex min-w-0 items-center gap-2">
-                {Icon ? <Icon className="h-5 w-5 shrink-0 text-aura-400" /> : null}
-                <h3 className="font-semibold text-zinc-100">{title}</h3>
+                {Icon ? <Icon className="h-5 w-5 shrink-0 text-primary" /> : null}
+                <h3 className="font-semibold text-ink-primary">{title}</h3>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="shrink-0 rounded-lg p-1.5 text-zinc-500 transition hover:bg-surface-elevated hover:text-zinc-300"
+                className="shrink-0 rounded-lg p-1.5 text-ink-secondary transition hover:bg-surface-raised hover:text-ink-primary"
                 aria-label="Close"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             {subtitle ? (
-              <div className="shrink-0 border-b border-surface-border/60 px-4 py-3 sm:px-5">
-                <p className="text-sm leading-snug text-zinc-400">{subtitle}</p>
+              <div className="shrink-0 border-b border-subtle/60 px-5 py-3">
+                <p className="text-sm leading-snug text-ink-secondary">{subtitle}</p>
               </div>
             ) : null}
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5 pb-[max(1rem,env(safe-area-inset-bottom))]">
               {loading ? (
-                <div className="flex items-center gap-2 text-sm text-zinc-500">
-                  <Loader2 className="h-4 w-4 animate-spin text-aura-400" />
+                <div className="flex items-center gap-2 text-sm text-ink-secondary">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   Thinking…
                 </div>
               ) : (
