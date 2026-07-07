@@ -3,6 +3,7 @@ import {
   BarChart3,
   BookOpen,
   Calendar,
+  Heart,
   Home,
   LayoutDashboard,
   Link2,
@@ -22,6 +23,7 @@ export const NAV_ITEMS = [
   { id: 'active', label: 'Active Path', icon: BookOpen, needsRoadmap: true },
   { id: 'resources', label: 'Resources', icon: Link2, needsRoadmap: true },
   { id: 'study', label: 'Study Hub', icon: Sparkles, needsRoadmap: true },
+  { id: 'refresh', label: 'Feeling Low?', icon: Heart },
   { id: 'community', label: 'Explore', icon: Users },
   { id: 'progress', label: 'Progress', icon: BarChart3 },
 ]

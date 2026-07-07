@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { BookOpen, Map, Sparkles, Target } from 'lucide-react'
+import { useEffect } from 'react'
 import GoalInput from '../components/GoalInput.jsx'
 
 const STEPS = [
@@ -8,7 +9,27 @@ const STEPS = [
   { icon: BookOpen, label: 'Study & ask', desc: 'Upload PDFs, chat with AI' },
 ]
 
-const HomePage = ({ loading, loadingTip, loadingTips, error, onSubmit, onCompare, onNavigate, compareVariants, onPickVariant }) => (
+const HomePage = ({
+  loading,
+  compareLoading,
+  loadingTip,
+  loadingTips,
+  error,
+  onSubmit,
+  onCompare,
+  onNavigate,
+  compareVariants,
+  onPickVariant,
+}) => {
+  useEffect(() => {
+    if (compareVariants?.length && !compareLoading) {
+      requestAnimationFrame(() => {
+        document.getElementById('compare-results')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      })
+    }
+  }, [compareVariants, compareLoading])
+
+  return (
   <div>
     <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-10 text-center">
       <motion.div
@@ -63,32 +84,16 @@ const HomePage = ({ loading, loadingTip, loadingTips, error, onSubmit, onCompare
       </motion.div>
     </motion.section>
 
-    <GoalInput loading={loading} onSubmit={onSubmit} onCompare={onCompare} />
+    <GoalInput
+      loading={loading}
+      compareLoading={compareLoading}
+      compareVariants={compareVariants}
+      onSubmit={onSubmit}
+      onCompare={onCompare}
+      onPickVariant={onPickVariant}
+    />
 
-    {compareVariants?.length ? (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mx-auto mt-8 max-w-3xl">
-        <h3 className="mb-4 text-center text-sm font-semibold text-ink-primary">Pick a path variant</h3>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {compareVariants.map((v) => (
-            <motion.button
-              key={v._id}
-              type="button"
-              whileHover={{ y: -4 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => onPickVariant?.(v)}
-              className="glass-card-interactive p-6 text-left"
-            >
-              <span className="text-xs uppercase text-primary">{v.variant || 'path'}</span>
-              <div className="mt-1 font-semibold text-ink-primary">{v.title}</div>
-              <p className="mt-2 line-clamp-2 text-xs text-ink-secondary">{v.description}</p>
-              <p className="mt-2 text-xs text-ink-secondary">{v.levels?.length || 0} levels</p>
-            </motion.button>
-          ))}
-        </div>
-      </motion.div>
-    ) : null}
-
-    {loading ? (
+    {loading && !compareLoading ? (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mx-auto mt-8 max-w-md text-center">
         <div className="glass-card p-6">
           <div className="mx-auto mb-3 h-1.5 w-full overflow-hidden rounded-full bg-surface-raised">
@@ -116,6 +121,7 @@ const HomePage = ({ loading, loadingTip, loadingTips, error, onSubmit, onCompare
       </motion.div>
     ) : null}
   </div>
-)
+  )
+}
 
 export default HomePage

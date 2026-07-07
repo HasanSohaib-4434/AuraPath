@@ -16,6 +16,7 @@ import YouTubeModal from './components/YouTubeModal.jsx'
 import CommunityPage from './pages/CommunityPage.jsx'
 import TodayPage from './pages/TodayPage.jsx'
 import ResourcesPage from './pages/ResourcesPage.jsx'
+import FeelingLowPage from './pages/FeelingLowPage.jsx'
 import { api, ensureSession, streamChat } from './utils/api.js'
 import { listAllProgress } from './utils/progressStorage.js'
 import { getDisplayName, setDisplayName } from './utils/session.js'
@@ -73,6 +74,7 @@ const readStreak = () => {
 const App = () => {
   const [page, setPage] = useState('home')
   const [loading, setLoading] = useState(false)
+  const [compareLoading, setCompareLoading] = useState(false)
   const [loadingTip, setLoadingTip] = useState(0)
   const [error, setError] = useState('')
   const [roadmap, setRoadmap] = useState(null)
@@ -207,18 +209,35 @@ const App = () => {
     await generate({ goal: t.goal, duration: t.duration, templateId: t.id, language: 'en' })
   }
 
-  const comparePaths = async ({ goal, duration }) => {
-    setLoading(true)
+  const comparePaths = async ({ goal, duration, examDate, language }) => {
+    setCompareLoading(true)
     setError('')
     setCompareVariants(null)
     try {
-      const data = await api.post('/api/roadmaps/compare', { goal, duration })
-      setCompareVariants(data.variants || [])
+      const data = await api.post('/api/roadmaps/compare', { goal, duration, examDate, language })
+      const variants = data.variants || []
+      if (!variants.length) {
+        setError('No path variants were generated. Try again or use Generate instead.')
+      } else {
+        setCompareVariants(variants)
+      }
     } catch (e) {
-      setError(e?.message || 'Compare failed')
+      setError(e?.message || 'Compare failed — check your connection and try again.')
     } finally {
-      setLoading(false)
+      setCompareLoading(false)
     }
+  }
+
+  const pickCompareVariant = async (v) => {
+    if (!v?._id) return
+    setCompareVariants(null)
+    setError('')
+    resetPdfState()
+    setRoadmap(v)
+    touchStreak()
+    await applyPdfMeta(String(v._id))
+    setProgressStats((p) => ({ ...p, streakDays: readStreak(), pathsTracked: listAllProgress().length }))
+    setPage('today')
   }
 
   const roadmapId = roadmap?._id ? String(roadmap._id) : ''
@@ -386,17 +405,14 @@ const App = () => {
             {page === 'home' ? (
               <HomePage
                 loading={loading}
+                compareLoading={compareLoading}
                 loadingTip={loadingTip}
                 loadingTips={LOADING_TIPS}
                 error={error}
                 onSubmit={generate}
                 onCompare={comparePaths}
                 compareVariants={compareVariants}
-                onPickVariant={(v) => {
-                  setRoadmap(v)
-                  setCompareVariants(null)
-                  setPage('today')
-                }}
+                onPickVariant={pickCompareVariant}
                 onNavigate={handleNavigate}
               />
             ) : null}
@@ -497,6 +513,8 @@ const App = () => {
             {page === 'progress' ? (
               <ProgressPage roadmap={roadmap} roadmapId={roadmapId} progressStats={progressStats} onNavigate={handleNavigate} />
             ) : null}
+
+            {page === 'refresh' ? <FeelingLowPage /> : null}
           </PageTransition>
         </AnimatePresence>
       </main>
