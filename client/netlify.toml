@@ -4,6 +4,6 @@
 
 [[redirects]]
   from = "/api/*"
-  to = "https://aurapath-1.onrender.com"
+  to = "https://aurapath-kes7.onrender.com/api/:splat"
   status = 200
   force = true
