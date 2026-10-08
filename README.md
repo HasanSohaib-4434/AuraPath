@@ -156,7 +156,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Your Name**  
-- GitHub: [@your-username](https://github.com/your-username)
+- GitHub: https://github.com/HasanSohaib-4434
 - Live Project: [aurapath.netlify.app](https://aurapath.netlify.app)
 
 ---
